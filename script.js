@@ -2,11 +2,10 @@ var canvas = document.getElementById("canvas");
 var c = canvas.getContext("2d");
 var height = canvas.height;
 var width = canvas.width;
-var test = document.getElementById("player0");
-console.log(test);
 var unit = width / 20;
 var keys = [];
 var cycle = 0;
+var arrows = [];
 var characters = [
   (player = {
     image: "player0",
@@ -18,7 +17,6 @@ var characters = [
     xvel: 0
   })
 ];
-var projectiles = [];
 function reDrawCanvas() {
   c.fillStyle = "grey";
   c.fillRect(0, 0, width, height / 2);
@@ -26,7 +24,6 @@ function reDrawCanvas() {
   c.fillRect(0, height / 2, width, height / 2);
   for (i = 0; i < characters.length; i++) {
     var image = document.getElementById(characters[i].image);
-    console.log(image);
     c.drawImage(
       image,
       characters[i].x,
@@ -34,6 +31,10 @@ function reDrawCanvas() {
       characters[i].width,
       characters[i].height
     );
+  }
+  for (i = 0; i < arrows.length; i++) {
+    c.fillStyle = "black";
+    c.fillRect(arrows[i].x, arrows[i].y, unit, unit / 8);
   }
 }
 
@@ -47,23 +48,29 @@ function updateGame() {
   } else {
     cycle = 0;
   }
-  if (keys[38] == true && characters[0].y > canvas.height / 2) {
+  if (
+    keys[38] == true &&
+    keys[40] != true &&
+    characters[0].y > canvas.height / 2
+  ) {
     characters[0].yvel = -2;
   } else if (
     keys[40] == true &&
+    keys[38] != true &&
     characters[0].y < canvas.height - characters[0].height
   ) {
     characters[0].yvel = 2;
   } else {
     characters[0].yvel = 0;
   }
-  if (keys[37] == true && characters[0].x > 0) {
-    characters[0].xvel = -2;
+  if (keys[37] == true && keys[39] != true && characters[0].x > 0) {
+    characters[0].xvel = -3;
   } else if (
     keys[39] == true &&
+    keys[37] != true &&
     characters[0].x < canvas.width - characters[0].width
   ) {
-    characters[0].xvel = 2;
+    characters[0].xvel = 3;
   } else {
     characters[0].xvel = 0;
   }
@@ -71,7 +78,15 @@ function updateGame() {
     characters[i].x = characters[i].x + characters[i].xvel;
     characters[i].y = characters[i].y + characters[i].yvel;
     characters[i].image = "player" + String(cycle);
-    console.log();
+  }
+  for (i = 0; i < arrows.length; i++) {
+    arrows[i].x = arrows[i].x + arrows[i].xvel;
+    arrows[i].y = arrows[i].y + arrows[i].yvel;
+    arrows[i].yvel = arrows[i].yvel + 0.2;
+    if (arrows[i].x > 920) {
+      arrows.splice(i, 1);
+      console.log("Arrow went to long");
+    }
   }
   reDrawCanvas();
   window.requestAnimationFrame(updateGame);
@@ -82,8 +97,11 @@ function updateGame() {
 updateGame();
 
 document.body.addEventListener("keydown", function(e) {
-  console.log(e.keyCode);
-  keys[e.keyCode] = true;
+  if (e.keyCode == 70) {
+    arrows[arrows.length] = new Arrow();
+  } else {
+    keys[e.keyCode] = true;
+  }
 });
 document.body.addEventListener("keyup", function(e) {
   keys[e.keyCode] = false;
