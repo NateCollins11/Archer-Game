@@ -164,14 +164,20 @@ document.body.addEventListener("keyup", function(e) {
 });
 document.body.addEventListener("mousedown", function(e) {
   if (arrow_delay_counter == 0) {
+    let rect = canvas.getBoundingClientRect();
+
     bow_state = "b";
     arrow_delay_counter = 16;
-    var x_of_click = e.clientX - 81;
-    var y_of_click = e.clientY - 35;
+    var x_of_click = e.clientX - rect.left;
+
+    var y_of_click = e.clientY - rect.top;
+    //console.log("Coordinate x: " + x_of_click, "Coordinate y: " + y_of_click);
     arrows[arrows.length] = new Arrow();
     var arrow = arrows[arrows.length - 1];
-    xdist = Math.abs(x_of_click - characters[0].x + 24);
-    ydist = Math.abs(characters[0].y + 43 - y_of_click);
+    xdist = Math.abs(x_of_click - characters[0].x + characters[0].width / 3);
+    console.log(xdist);
+    ydist = Math.abs(characters[0].y - y_of_click - characters[0].height / 2);
+    console.log(ydist);
     var x_to_y_ratio = ydist / (xdist + ydist);
     arrow.yvel =
       (-(arrow.total_vel * x_to_y_ratio) *
