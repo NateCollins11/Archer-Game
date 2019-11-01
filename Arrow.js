@@ -2,8 +2,64 @@ var canvas = document.getElementById("canvas");
 var c = canvas.getContext("2d");
 
 function Arrow() {
-  this.x = characters[0].x + characters[0].width;
-  this.y = characters[0].y + characters[0].height / 3;
-  this.xvel = 16;
-  this.yvel = -4;
+  this.index = arrows.length;
+  this.x = characters[0].x + characters[0].width / 2;
+  this.y = characters[0].y + characters[0].height / 2.3;
+  this.xvel = 18;
+  this.yvel = -5;
+  this.doesitbounce = false;
+  this.floor = characters[0].y + characters[0].height * 0.66;
+  this.grav_constant = 0.3;
+  this.bounce_constant = -0;
+  this.tip_color = "rgb(0, 0, 0)";
+  this.is_active = true;
+  this.draw = function() {
+    // c.beginPath();
+    // c.fillStyle = "rgb(175, 124, 13)";
+    // c.arc(arrows[i].x, arrows[i].y, 20, 0, 2 * Math.PI);
+    // c.fill();
+    // c.stroke();
+    c.fillStyle = "rgb(140, 100, 13)";
+    c.fillRect(this.x, this.y, unit, unit / 12);
+    c.fillStyle = this.tip_color;
+    c.fillRect(this.x + unit, this.y, unit / 12, unit / 12);
+    c.fillRect(
+      this.x + (unit * 13) / 12,
+      this.y + unit / 48,
+      unit / 12,
+      unit / 24
+    );
+  };
+  this.detect_collision = function() {
+    if (this.x > 920 || this.x < -50) {
+      arrows.splice(i, 1);
+      console.log("Arrow went to long");
+    } else {
+      for (m = 0; m < enemies.length; m++) {
+        var e = enemies[m];
+
+        if (
+          this.is_active == true &&
+          this.x + (unit * 7) / 6 >= e.x + unit &&
+          this.x + (unit * 7) / 6 <= e.x + e.width &&
+          this.y + unit / 12 >= e.y &&
+          this.y + unit / 12 <= e.y + e.height
+        ) {
+          if (enemies[m].is_statue == false) {
+            enemies[m].is_statue = true;
+            enemies[m].image = "statue";
+            enemies[m].xvel = 0;
+            score++;
+            console.log(score);
+          }
+          //arrows.splice(this.index, 1);
+          this.xvel = 0;
+          this.grav_constant = 0;
+          this.yvel = 0;
+          this.tip_color = "rgb(140, 50, 30)";
+          this.is_active = false;
+        }
+      }
+    }
+  };
 }
