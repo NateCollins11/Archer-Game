@@ -11,6 +11,7 @@ function Arrow() {
   this.floor = characters[0].y + characters[0].height * 0.66;
   this.grav_constant = 0.3;
   this.bounce_constant = -0;
+  this.total_vel = characters[0].total_vel;
   this.tip_color = "rgb(0, 0, 0)";
   this.is_active = true;
   this.draw = function() {
@@ -38,26 +39,41 @@ function Arrow() {
       for (m = 0; m < enemies.length; m++) {
         var e = enemies[m];
 
-        if (
-          this.is_active == true &&
-          this.x + (unit * 7) / 6 >= e.x + unit &&
-          this.x + (unit * 7) / 6 <= e.x + e.width &&
-          this.y + unit / 12 >= e.y &&
-          this.y + unit / 12 <= e.y + e.height
-        ) {
-          if (enemies[m].is_statue == false) {
-            enemies[m].is_statue = true;
-            enemies[m].image = "statue";
-            enemies[m].xvel = 0;
+        if (this.is_active == true) {
+          if (
+            e.is_statue == false &&
+            this.x + (unit * 7) / 6 >= e.x + unit &&
+            this.x + (unit * 7) / 6 <= e.x + e.width &&
+            this.y + unit / 12 >= e.y &&
+            this.y + unit / 12 <= e.y + e.height / 4
+          ) {
+            enemies.splice(m, 1);
+            this.xvel = 0;
+            this.yvel = 0;
+            this.tip_color = "rgb(140, 50, 30)";
+            this.is_active = false;
+            this.doesitbounce = true;
             score++;
-            console.log(score);
+          } else if (
+            this.x + (unit * 7) / 6 >= e.x + unit &&
+            this.x + (unit * 7) / 6 <= e.x + e.width &&
+            this.y + unit / 12 >= e.y &&
+            this.y + unit / 12 <= e.y + e.height
+          ) {
+            if (enemies[m].is_statue == false) {
+              enemies[m].is_statue = true;
+              enemies[m].image = "statue";
+              enemies[m].xvel = 0;
+              score++;
+              console.log(score);
+            }
+            //arrows.splice(this.index, 1);
+            this.xvel = 0;
+            this.grav_constant = 0;
+            this.yvel = 0;
+            this.tip_color = "rgb(140, 50, 30)";
+            this.is_active = false;
           }
-          //arrows.splice(this.index, 1);
-          this.xvel = 0;
-          this.grav_constant = 0;
-          this.yvel = 0;
-          this.tip_color = "rgb(140, 50, 30)";
-          this.is_active = false;
         }
       }
     }

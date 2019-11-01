@@ -8,7 +8,7 @@ var cycle = 0;
 var game_over = false;
 var bow_state = "a";
 var arrow_delay_counter = 0;
-var spawning = false;
+var spawning = true;
 var score = 0;
 var obstacles = [];
 var arrows = [];
@@ -162,7 +162,7 @@ document.body.addEventListener("keydown", function(e) {
 document.body.addEventListener("keyup", function(e) {
   keys[e.keyCode] = false;
 });
-document.body.addEventListener("click", function(e) {
+document.body.addEventListener("mousedown", function(e) {
   if (arrow_delay_counter == 0) {
     bow_state = "b";
     arrow_delay_counter = 16;
@@ -174,11 +174,11 @@ document.body.addEventListener("click", function(e) {
     ydist = Math.abs(characters[0].y + 43 - y_of_click);
     var x_to_y_ratio = ydist / (xdist + ydist);
     arrow.yvel =
-      (-(characters[0].total_vel * x_to_y_ratio) *
+      (-(arrow.total_vel * x_to_y_ratio) *
         (characters[0].y + 43 - y_of_click)) /
       Math.abs(characters[0].y + 43 - y_of_click);
     arrow.xvel =
-      ((characters[0].total_vel - Math.abs(arrow.yvel)) *
+      ((arrow.total_vel - Math.abs(arrow.yvel)) *
         Math.abs(x_of_click - characters[0].x + 24)) /
       (x_of_click - characters[0].x + 24);
 
