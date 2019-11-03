@@ -1,3 +1,4 @@
+
 var canvas = document.getElementById("canvas");
 var c = canvas.getContext("2d");
 var height = canvas.height;
@@ -14,8 +15,29 @@ var characters = [
     height: unit * 2,
     width: unit * 2,
     yvel: 0,
-    xvel: 0
-  })
+    xvel: 0,
+    health: 10
+  }),
+  (enemy1 = {
+      image: "player0",
+      y: height - unit * (Math.random() * 4 + 1.1),
+      x: width - unit * 2,
+      height: unit * 2,
+      width: unit * 2,
+      yvel: 0,
+      xvel: 0
+  }),
+//   ({}),
+//   ({}),
+//   (enemy2 = {
+//     image: "player1",
+//     y: height - unit * Math.floor(Math.random() * Math.floor(6)),
+//     x: width - unit * 2,
+//     height: unit * 2,
+//     width: unit * 2,
+//     yvel: 0,
+//     xvel: 0
+//   })
 ];
 function reDrawCanvas() {
   c.fillStyle = "grey";
@@ -39,6 +61,22 @@ function reDrawCanvas() {
 }
 
 function updateGame() {
+  console.log(characters[1].x)  
+  if (characters[1].x < 0){
+    console.log('redrawing')
+    var image = document.getElementById(characters[1].image);  
+    c.drawImage(
+        image,
+        700,
+        300,
+        characters[1].width,
+        characters[1].height
+      ); 
+  }
+  if (characters[0].health == 0) {
+      c.fillStyle = 'lightGrey';
+      c.fillRect(characters[0].x + characters[0].x/2, characters[0].y + characters[0].y/2, characters[0].x - characters[0].x/2, characters[0].y - characters[0].y/2)
+  }
   if (characters[0].xvel != 0 || characters[0].yvel != 0) {
     if (cycle < 12) {
       cycle = cycle + 1;
@@ -74,6 +112,17 @@ function updateGame() {
   } else {
     characters[0].xvel = 0;
   }
+  if (characters[1].x > - 100) {
+      characters[1].xvel = -3;
+  }
+  else {
+      characters[1].xvel = 0;
+  }
+  if (characters[1].x == characters[0].x && (characters[1].y + characters[1].height >= characters[0].y 
+    || characters[0].y - characters[1].height <= characters[0].y)) {
+        characters[0].health -= 1;
+        console.log(characters[0].health)
+    }
   for (i = 0; i < characters.length; i++) {
     characters[i].x = characters[i].x + characters[i].xvel;
     characters[i].y = characters[i].y + characters[i].yvel;
