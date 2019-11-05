@@ -31,8 +31,8 @@ function Arrow(xvel, yvel) {
       unit / 24
     );
   };
-  // console.log(this.xvel)
-  // console.log(this.yvel)
+  console.log(this.xvel)
+  console.log(this.yvel)
   this.detect_collision = function() {
     if (this.x > 920 || this.x < -50) {
       arrows.splice(i, 1);

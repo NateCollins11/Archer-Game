@@ -15,6 +15,7 @@ var arrows = [];
 var enemies = [];
 var arrowxvel = 0;
 var arrowyvel = 0;
+var shot_force = 0;
 var player = {
       image: "player0",
       y: height - unit * 3,
@@ -35,15 +36,27 @@ function reDrawCanvas() {
   if (game_over == true) {
     c.fillText("Game Over", (width * 2) / 5, height / 8);
   }
-    var image = document.getElementById(player.image);
-    console.log(player.image)
-    c.drawImage(
-      image,
-      player.x,
-      player.y,
-      player.width,
-      player.height
-    );
+  var image = document.getElementById(player.image);
+  c.drawImage(
+    image,
+    player.x,
+    player.y,
+    player.width,
+    player.height
+  );
+  c.strokeRect(
+    player.x + player.width/2.4,
+    player.y - player.height/2,
+    unit * 0.3,
+    unit
+  )
+  c.fillStyle = "black"
+  c.fillRect(
+    player.x + player.width/2.4,
+    player.y,
+    unit * 0.3,
+    shot_force
+  )
   for (i = 0; i < arrows.length; i++) {
     arrows[i].draw();
   }
@@ -67,7 +80,6 @@ function updateGame() {
   }
   if (spawning == true) {
     if (Math.random() > 0.992) {
-      console.log("Spawned baddie");
       enemies[enemies.length] = new Enemy();
     }
   }
@@ -140,9 +152,10 @@ updateGame();
 // reDrawCanvas();
 
 document.body.addEventListener("keydown", function(e) {
-  while (e.keyCode == 70 && arrowxvel <= 20 && arrowyvel >= -6) {
+  if (e.keyCode == 70 && arrowxvel <= 30 && arrowyvel >= -9) {
     arrowxvel += 3;
     arrowyvel -= 0.85;
+    shot_force -= 3;
   } if (e.keyCode == 66) {
     console.log("order 66");
     if (spawning == true) {
@@ -161,6 +174,7 @@ if (e.keyCode == 70 && arrow_delay_counter == 0) {
       arrow_delay_counter = 16;
       arrowyvel = 0;
       arrowxvel = 0;
+      shot_force = 0;
   }
   keys[e.keyCode] = false; 
 });
