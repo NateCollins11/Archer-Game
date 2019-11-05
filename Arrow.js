@@ -3,15 +3,15 @@ var c = canvas.getContext("2d");
 
 function Arrow(xvel, yvel) {
   this.index = arrows.length;
-  this.x = characters[0].x + characters[0].width / 2;
-  this.y = characters[0].y + characters[0].height / 2.3;
+  this.x = player.x + player.width / 2;
+  this.y = player.y + player.height / 2.3;
   this.xvel = xvel;
   this.yvel = yvel;
   this.doesitbounce = false;
-  this.floor = characters[0].y + characters[0].height * 0.66;
+  this.floor = player.y + player.height * 0.66;
   this.grav_constant = 0.3;
   this.bounce_constant = -0;
-  this.total_vel = characters[0].total_vel;
+  this.total_vel = player.total_vel;
   this.tip_color = "rgb(0, 0, 0)";
   this.is_active = true;
   this.draw = function() {
@@ -31,8 +31,8 @@ function Arrow(xvel, yvel) {
       unit / 24
     );
   };
-  console.log(this.xvel)
-  console.log(this.yvel)
+  // console.log(this.xvel)
+  // console.log(this.yvel)
   this.detect_collision = function() {
     if (this.x > 920 || this.x < -50) {
       arrows.splice(i, 1);

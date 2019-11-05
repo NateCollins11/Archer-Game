@@ -15,19 +15,16 @@ var arrows = [];
 var enemies = [];
 var arrowxvel = 0;
 var arrowyvel = 0;
-var characters = [
-  (player = {
-    image: "player0",
-    y: height - unit * 3,
-    x: unit * 6,
-    height: unit * 2,
-    width: unit * 2,
-    yvel: 0,
-    xvel: 0,
-    total_vel: 24
-  })
-];
-
+var player = {
+      image: "player0",
+      y: height - unit * 3,
+      x: unit * 6,
+      height: unit * 2,
+      width: unit * 2,
+      yvel: 0,
+      xvel: 0,
+      total_vel: 24
+    }
 function reDrawCanvas() {
   c.fillStyle = "grey";
   c.fillRect(0, 0, width, height / 2);
@@ -38,16 +35,15 @@ function reDrawCanvas() {
   if (game_over == true) {
     c.fillText("Game Over", (width * 2) / 5, height / 8);
   }
-  for (i = 0; i < characters.length; i++) {
-    var image = document.getElementById(characters[i].image);
+    var image = document.getElementById(player.image);
+    console.log(player.image)
     c.drawImage(
       image,
-      characters[i].x,
-      characters[i].y,
-      characters[i].width,
-      characters[i].height
+      player.x,
+      player.y,
+      player.width,
+      player.height
     );
-  }
   for (i = 0; i < arrows.length; i++) {
     arrows[i].draw();
   }
@@ -75,7 +71,7 @@ function updateGame() {
       enemies[enemies.length] = new Enemy();
     }
   }
-  if (characters[0].xvel != 0 || characters[0].yvel != 0) {
+  if (player.xvel != 0 || player.yvel != 0) {
     if (cycle < 3) {
       cycle = cycle + 1;
     } else {
@@ -87,34 +83,32 @@ function updateGame() {
   if (
     keys[87] == true &&
     keys[83] != true &&
-    characters[0].y > canvas.height / 2
+    player.y > canvas.height / 2
   ) {
-    characters[0].yvel = -2;
+    player.yvel = -2;
   } else if (
     keys[83] == true &&
     keys[87] != true &&
-    characters[0].y < canvas.height - characters[0].height
+    player.y < canvas.height - player.height
   ) {
-    characters[0].yvel = 2;
+    player.yvel = 2;
   } else {
-    characters[0].yvel = 0;
+    player.yvel = 0;
   }
-  if (keys[65] == true && keys[68] != true && characters[0].x > 0) {
-    characters[0].xvel = -3;
+  if (keys[65] == true && keys[68] != true && player.x > 0) {
+    player.xvel = -3;
   } else if (
     keys[68] == true &&
     keys[65] != true &&
-    characters[0].x < canvas.width - characters[0].width
+    player.x < canvas.width - player.width
   ) {
-    characters[0].xvel = 3;
+    player.xvel = 3;
   } else {
-    characters[0].xvel = 0;
+    player.xvel = 0;
   }
-  for (i = 0; i < characters.length; i++) {
-    characters[i].x = characters[i].x + characters[i].xvel;
-    characters[i].y = characters[i].y + characters[i].yvel;
-    characters[i].image = "player" + String(cycle) + bow_state;
-  }
+    player.x = player.x + player.xvel;
+    player.y = player.y + player.yvel;
+    player.image = "player" + String(cycle) + bow_state;
   for (i = 0; i < enemies.length; i++) {
     enemies[i].x = enemies[i].x + enemies[i].xvel;
     enemies[i].y = enemies[i].y + enemies[i].yvel;
@@ -143,11 +137,13 @@ function updateGame() {
 
 updateGame();
 
+// reDrawCanvas();
+
 document.body.addEventListener("keydown", function(e) {
-  if (e.keyCode == 70 && arrowxvel <= 20 && arrowyvel <= -6) {
+  while (e.keyCode == 70 && arrowxvel <= 20 && arrowyvel >= -6) {
     arrowxvel += 3;
     arrowyvel -= 0.85;
-  } else if (e.keyCode == 66) {
+  } if (e.keyCode == 66) {
     console.log("order 66");
     if (spawning == true) {
       spawning = false;
@@ -165,11 +161,10 @@ if (e.keyCode == 70 && arrow_delay_counter == 0) {
       arrow_delay_counter = 16;
       arrowyvel = 0;
       arrowxvel = 0;
-  } 
+  }
+  keys[e.keyCode] = false; 
 });
-document.body.addEventListener("keyup", function(e) {
-  keys[e.keyCode] = false;
-});
+
 document.body.addEventListener("mousedown", function(e) {
   if (arrow_delay_counter == 0) {
     let rect = canvas.getBoundingClientRect();
@@ -182,19 +177,19 @@ document.body.addEventListener("mousedown", function(e) {
     //console.log("Coordinate x: " + x_of_click, "Coordinate y: " + y_of_click);
     arrows[arrows.length] = new Arrow();
     var arrow = arrows[arrows.length - 1];
-    xdist = Math.abs(x_of_click - characters[0].x + characters[0].width / 3);
+    xdist = Math.abs(x_of_click - player.x + player.width / 3);
     console.log(xdist);
-    ydist = Math.abs(characters[0].y - y_of_click - characters[0].height / 2);
+    ydist = Math.abs(player.y - y_of_click - player.height / 2);
     console.log(ydist);
     var x_to_y_ratio = ydist / (xdist + ydist);
     arrow.yvel =
       (-(arrow.total_vel * x_to_y_ratio) *
-        (characters[0].y + 43 - y_of_click)) /
-      Math.abs(characters[0].y + 43 - y_of_click);
+        (player.y + 43 - y_of_click)) /
+      Math.abs(player.y + 43 - y_of_click);
     arrow.xvel =
       ((arrow.total_vel - Math.abs(arrow.yvel)) *
-        Math.abs(x_of_click - characters[0].x + 24)) /
-      (x_of_click - characters[0].x + 24);
+        Math.abs(x_of_click - player.x + 24)) /
+      (x_of_click - player.x + 24);
 
     //
     //
