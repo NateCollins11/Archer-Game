@@ -124,10 +124,7 @@ function updateGame() {
   for (i = 0; i < enemies.length; i++) {
     enemies[i].x = enemies[i].x + enemies[i].xvel;
     enemies[i].y = enemies[i].y + enemies[i].yvel;
-    if (enemies[i].is_statue == false) {
-      enemies[i].loss_check();
-      enemies[i].image = "enemy"; //+ String(cycle);
-    }
+    enemies[i].loss_check(); //+ String(cycle);
   }
   for (i = 0; i < arrows.length; i++) {
     if (arrows[i].doesitbounce == true)
@@ -138,8 +135,14 @@ function updateGame() {
     arrows[i].x = arrows[i].x + arrows[i].xvel;
     arrows[i].y = arrows[i].y + arrows[i].yvel;
     arrows[i].yvel = arrows[i].yvel + arrows[i].grav_constant;
-
     arrows[i].detect_collision();
+    try {
+        if (arrows[i].stuck_in_enemy == true) {
+            arrows[i].x = arrows[i].x + arrows[i].xvel;
+        }
+    } catch {
+        console.log('arrow has been deleted')
+    };
   }
   reDrawCanvas();
   if (game_over == false) {
@@ -157,7 +160,7 @@ document.body.addEventListener("keydown", function(e) {
     arrowyvel -= 0.85;
     shot_force -= 3;
   } if (e.keyCode == 66) {
-    console.log("order 66");
+    // console.log("order 66");
     if (spawning == true) {
       spawning = false;
     } else {
@@ -192,9 +195,9 @@ document.body.addEventListener("mousedown", function(e) {
     arrows[arrows.length] = new Arrow();
     var arrow = arrows[arrows.length - 1];
     xdist = Math.abs(x_of_click - player.x + player.width / 3);
-    console.log(xdist);
+    // console.log(xdist);
     ydist = Math.abs(player.y - y_of_click - player.height / 2);
-    console.log(ydist);
+    // console.log(ydist);
     var x_to_y_ratio = ydist / (xdist + ydist);
     arrow.yvel =
       (-(arrow.total_vel * x_to_y_ratio) *

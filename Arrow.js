@@ -13,6 +13,7 @@ function Arrow(xvel, yvel) {
   this.bounce_constant = -0;
   this.total_vel = player.total_vel;
   this.tip_color = "rgb(0, 0, 0)";
+  this.stuck_in_enemy = false;
   this.is_active = true;
   this.draw = function() {
     // c.beginPath();
@@ -31,8 +32,6 @@ function Arrow(xvel, yvel) {
       unit / 24
     );
   };
-  console.log(this.xvel)
-  console.log(this.yvel)
   this.detect_collision = function() {
     if (this.x > 920 || this.x < -50) {
       arrows.splice(i, 1);
@@ -43,18 +42,18 @@ function Arrow(xvel, yvel) {
 
         if (this.is_active == true) {
           if (
-            e.is_statue == false &&
             this.x + (unit * 7) / 6 >= e.x + unit &&
             this.x + (unit * 7) / 6 <= e.x + e.width &&
             this.y + unit / 12 >= e.y &&
-            this.y + unit / 12 <= e.y + e.height / 4
+            this.y + unit / 12 <= e.y + e.height / 4 ||
+            e.health == 0
           ) {
-            enemies.splice(m, 1);
             this.xvel = 0;
             this.yvel = 0;
             this.tip_color = "rgb(140, 50, 30)";
             this.is_active = false;
             this.doesitbounce = true;
+            enemies.splice(m, 1);
             score++;
           } else if (
             this.x + (unit * 7) / 6 >= e.x + unit &&
@@ -62,15 +61,32 @@ function Arrow(xvel, yvel) {
             this.y + unit / 12 >= e.y &&
             this.y + unit / 12 <= e.y + e.height
           ) {
-            if (enemies[m].is_statue == false) {
-              enemies[m].is_statue = true;
-              enemies[m].image = "statue";
-              enemies[m].xvel = 0;
-              score++;
-              console.log(score);
+            e.health -= 1;
+            if (e.health == 0) {
+              e.image = "fallen_enemy"
+              e.xvel = 0
+              for (i=0; i < arrows.length ; i++) {
+                if (arrows[i].x + (unit * 7) / 6 >= e.x + unit &&
+                arrows[i].x + (unit * 7) / 6 <= e.x + e.width &&
+                arrows[i].y + unit / 12 >= e.y &&
+                arrows[i].y + unit / 12 <= e.y + e.height) {
+                    arrows[i].xvel = 0;
+                    arrows[i].x += unit * 0.75;
+                }
+              }
             }
+            else {
+              e.image = "wounded_enemy"
+              e.xvel /= 2;
+              this.xvel = e.xvel/2;
+              this.stuck_in_enemy = true;
+            }
+            score++;
+            // console.log(score);
             //arrows.splice(this.index, 1);
-            this.xvel = 0;
+            if (this.stuck_in_enemy == false || e.health == 0) {
+              this.xvel = 0;
+            }
             this.grav_constant = 0;
             this.yvel = 0;
             this.tip_color = "rgb(140, 50, 30)";
