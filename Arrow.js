@@ -76,14 +76,11 @@ function Arrow(xvel, yvel) {
               }
             }
             else {
-              e.image = "wounded_enemy"
               e.xvel /= 2;
               this.xvel = e.xvel/2;
               this.stuck_in_enemy = true;
             }
             score++;
-            // console.log(score);
-            //arrows.splice(this.index, 1);
             if (this.stuck_in_enemy == false || e.health == 0) {
               this.xvel = 0;
             }

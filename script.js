@@ -16,6 +16,7 @@ var enemies = [];
 var arrowxvel = 0;
 var arrowyvel = 0;
 var shot_force = 0;
+var wounded_enemy= "";
 var player = {
       image: "player0",
       y: height - unit * 3,
@@ -27,9 +28,9 @@ var player = {
       total_vel: 24
     }
 function reDrawCanvas() {
-  c.fillStyle = "grey";
+  c.fillStyle = "lightblue";
   c.fillRect(0, 0, width, height / 2);
-  c.fillStyle = "lightGrey";
+  c.fillStyle = "green";
   c.fillRect(0, height / 2, width, height / 2);
   c.font = "40px Arial";
   c.fillText("Score: " + String(score), unit * 2, unit * 2);
@@ -62,6 +63,8 @@ function reDrawCanvas() {
   }
   for (i = 0; i < enemies.length; i++) {
     var image = document.getElementById(enemies[i].image);
+    console.log(enemies[i].image)
+    console.log(enemies[i].xvel)
     c.drawImage(
       image,
       enemies[i].x,
@@ -73,13 +76,16 @@ function reDrawCanvas() {
 }
 
 function updateGame() {
+  if (game_over == false) {
+    window.requestAnimationFrame(updateGame);
+  }
   if (arrow_delay_counter > 0) {
     arrow_delay_counter = arrow_delay_counter - 1;
   } else {
     bow_state = "a";
   }
   if (spawning == true) {
-    if (Math.random() > 0.992) {
+    if (Math.random() > 0.995) {
       enemies[enemies.length] = new Enemy();
     }
   }
@@ -125,6 +131,37 @@ function updateGame() {
     enemies[i].x = enemies[i].x + enemies[i].xvel;
     enemies[i].y = enemies[i].y + enemies[i].yvel;
     enemies[i].loss_check(); //+ String(cycle);
+    if (enemies[i].xvel < -0.5) {
+      if (enemies[i].cyclefwd < 5) {
+        enemies[i].cyclefwd += 1;
+      } else {
+        enemies[i].cyclefwd = 0;
+      }
+      enemies[i].image = "enemy" + String(enemies[i].cyclefwd)
+    }
+    else if (enemies[i].xvel == -0.5){
+      if (enemies[i].cyclefwd < 5 && enemies[i].cycle == true) {
+        enemies[i].cyclefwd += 1;
+        wounded_enemy = "wounded_enemy" + String(enemies[i].cyclefwd)
+        enemies[i].image = wounded_enemy
+        if (enemies[i].cyclefwd == 5) {
+          enemies[i].cycle = false;
+          enemies[i].cycleback = 5
+        }
+      } 
+      // else {
+      //   enemies[i].cyclefwd = 0;
+      // }
+      else if (enemies[i].cycleback <= 5 && enemies[i].cycle == false) {
+        console.log('in 2nd if statement')
+        enemies[i].cycleback -= 1;
+        enemies[i].image = "wounded_enemy" + String(enemies[i].cycleback)
+        if (enemies[i].cycleback == 0) {
+          enemies[i].cycle = true;
+          enemies[i].cyclefwd = 0
+        }
+      } 
+    } 
   }
   for (i = 0; i < arrows.length; i++) {
     if (arrows[i].doesitbounce == true)
@@ -145,9 +182,6 @@ function updateGame() {
     };
   }
   reDrawCanvas();
-  if (game_over == false) {
-    window.requestAnimationFrame(updateGame);
-  }
 }
 
 updateGame();
