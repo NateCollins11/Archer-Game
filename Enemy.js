@@ -12,7 +12,7 @@ function Enemy() {
   this.health = this.height == unit * 2 ? 1 : 2;
   this.cycle = true;
   this.cyclefwd = 0;
-  this.cycleback = 0;
+  this.cycleback = 6;
   this.loss_check = function() {
     if (this.x + this.width / 2 < 0) {
       game_over = true;

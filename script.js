@@ -9,6 +9,8 @@ var game_over = false;
 var bow_state = "a";
 var arrow_delay_counter = 0;
 var spawning = true;
+var spawn_rate = 0.992;
+var level = 1;
 var score = 0;
 var obstacles = [];
 var arrows = [];
@@ -34,6 +36,7 @@ function reDrawCanvas() {
   c.fillRect(0, height / 2, width, height / 2);
   c.font = "40px Arial";
   c.fillText("Score: " + String(score), unit * 2, unit * 2);
+  c.fillText("Level: " + String(level), unit * 15, unit * 2);
   if (game_over == true) {
     c.fillText("Game Over", (width * 2) / 5, height / 8);
   }
@@ -59,12 +62,11 @@ function reDrawCanvas() {
     shot_force
   )
   for (i = 0; i < arrows.length; i++) {
+    console.log("arrows[i].xvel in script" + arrows[i].xvel)
     arrows[i].draw();
   }
   for (i = 0; i < enemies.length; i++) {
     var image = document.getElementById(enemies[i].image);
-    console.log(enemies[i].image)
-    console.log(enemies[i].xvel)
     c.drawImage(
       image,
       enemies[i].x,
@@ -85,7 +87,7 @@ function updateGame() {
     bow_state = "a";
   }
   if (spawning == true) {
-    if (Math.random() > 0.995) {
+    if (Math.random() > spawn_rate) {
       enemies[enemies.length] = new Enemy();
     }
   }
@@ -140,20 +142,19 @@ function updateGame() {
       enemies[i].image = "enemy" + String(enemies[i].cyclefwd)
     }
     else if (enemies[i].xvel == -0.5){
-      if (enemies[i].cyclefwd < 5 && enemies[i].cycle == true) {
+      if (enemies[i].cyclefwd < 6 && enemies[i].cycle == true) {
         enemies[i].cyclefwd += 1;
         wounded_enemy = "wounded_enemy" + String(enemies[i].cyclefwd)
         enemies[i].image = wounded_enemy
-        if (enemies[i].cyclefwd == 5) {
+        if (enemies[i].cyclefwd == 6) {
           enemies[i].cycle = false;
-          enemies[i].cycleback = 5
+          enemies[i].cycleback = 6
         }
       } 
       // else {
       //   enemies[i].cyclefwd = 0;
       // }
-      else if (enemies[i].cycleback <= 5 && enemies[i].cycle == false) {
-        console.log('in 2nd if statement')
+      else if (enemies[i].cycleback <= 6 && enemies[i].cycle == false) {
         enemies[i].cycleback -= 1;
         enemies[i].image = "wounded_enemy" + String(enemies[i].cycleback)
         if (enemies[i].cycleback == 0) {
@@ -206,6 +207,7 @@ document.body.addEventListener("keydown", function(e) {
 });  
 document.body.addEventListener("keyup", function(e) {
 if (e.keyCode == 70 && arrow_delay_counter == 0) {
+      console.log('arrowxvel =' + arrowxvel)
       arrows[arrows.length] = new Arrow(arrowxvel, arrowyvel);
       bow_state = "b";
       arrow_delay_counter = 16;
