@@ -27,13 +27,13 @@ function Arrow(xvel, yvel) {
     c.fillRect(this.x + unit, this.y, unit / 12, unit / 12);
     c.fillRect(
       this.x + (unit * 13) / 12,
-      this.y + unit / 48,
+      this.y + unit / 48,''
       unit / 12,
       unit / 24
     );
   };
   this.detect_collision = function() {
-    console.log("arrows[i].xvel in Arrow = " + this.xvel)
+    console.log("arrows[i].xvel in Arrow = " + this.xvel);
     if (this.x > 920 || this.x < -50) {
       arrows.splice(i, 1);
       console.log("Arrow went to long");
@@ -69,21 +69,23 @@ function Arrow(xvel, yvel) {
           ) {
             e.health -= 1;
             if (e.health == 0 || this.y + unit / 12 <= e.y + e.height / 4) {
-              e.image = "fallen_enemy"
-              e.xvel = 0
+              e.image = "fallen_enemy";
+              e.xvel = 0;
               this.doesitbounce = true;
               if (this.y + unit / 12 <= e.y + e.height / 4) {
-                this.y += unit/3;
-                this.x += unit/3;
+                this.y += unit / 3;
+                this.x += unit / 3;
               }
-              for (i=0; i < arrows.length ; i++) {
-                if (arrows[i].x + (unit * 7) / 6 >= e.x + unit &&
-                arrows[i].x + (unit * 7) / 6 <= e.x + e.width &&
-                arrows[i].y + unit / 12 >= e.y &&
-                arrows[i].y + unit / 12 <= e.y + e.height) {
-                    console.log("arrow xvel set to 0")
-                    arrows[i].xvel = 0;
-                    arrows[i].x += unit * 0.75;
+              for (i = 0; i < arrows.length; i++) {
+                if (
+                  arrows[i].x + (unit * 7) / 6 >= e.x + unit &&
+                  arrows[i].x + (unit * 7) / 6 <= e.x + e.width &&
+                  arrows[i].y + unit / 12 >= e.y &&
+                  arrows[i].y + unit / 12 <= e.y + e.height
+                ) {
+                  console.log("arrow xvel set to 0");
+                  arrows[i].xvel = 0;
+                  arrows[i].x += unit * 0.75;
                 }
               }
               if (e.width == unit * 2) {
@@ -92,14 +94,13 @@ function Arrow(xvel, yvel) {
                 score += 2;
               }
               setTimeout(() => {
-                if (this.y < height/2) {
+                if (this.y < height / 2) {
                   this.y += unit;
                 }
               }, 4000);
-            }
-            else {
+            } else {
               e.xvel /= 2;
-              this.xvel = e.xvel/2;
+              this.xvel = e.xvel / 2;
               this.stuck_in_enemy = true;
             }
             // if (this.stuck_in_enemy == false || e.health == 0) {
@@ -107,8 +108,8 @@ function Arrow(xvel, yvel) {
             // }
             if (score % 20 == 0) {
               level += 1;
-              spawn_rate += .001;
-              console.log("spawn rate =" + spawn_rate)
+              spawn_rate += 0.001;
+              console.log("spawn rate =" + spawn_rate);
             }
             this.grav_constant = 0;
             this.yvel = 0;

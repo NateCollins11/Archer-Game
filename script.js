@@ -18,17 +18,17 @@ var enemies = [];
 var arrowxvel = 0;
 var arrowyvel = 0;
 var shot_force = 0;
-var wounded_enemy= "";
+var wounded_enemy = "";
 var player = {
-      image: "player0",
-      y: height - unit * 3,
-      x: unit * 6,
-      height: unit * 2,
-      width: unit * 2,
-      yvel: 0,
-      xvel: 0,
-      total_vel: 24
-    }
+  image: "player0",
+  y: height - unit * 3,
+  x: unit * 6,
+  height: unit * 2,
+  width: unit * 2,
+  yvel: 0,
+  xvel: 0,
+  total_vel: 24
+};
 function reDrawCanvas() {
   c.fillStyle = "lightblue";
   c.fillRect(0, 0, width, height / 2);
@@ -41,28 +41,17 @@ function reDrawCanvas() {
     c.fillText("Game Over", (width * 2) / 5, height / 8);
   }
   var image = document.getElementById(player.image);
-  c.drawImage(
-    image,
-    player.x,
-    player.y,
-    player.width,
-    player.height
-  );
+  c.drawImage(image, player.x, player.y, player.width, player.height);
   c.strokeRect(
-    player.x + player.width/2.4,
-    player.y - player.height/2,
+    player.x + player.width / 2.4,
+    player.y - player.height / 2,
     unit * 0.3,
     unit
-  )
-  c.fillStyle = "black"
-  c.fillRect(
-    player.x + player.width/2.4,
-    player.y,
-    unit * 0.3,
-    shot_force
-  )
+  );
+  c.fillStyle = "black";
+  c.fillRect(player.x + player.width / 2.4, player.y, unit * 0.3, shot_force);
   for (i = 0; i < arrows.length; i++) {
-    console.log("arrows[i].xvel in script" + arrows[i].xvel)
+    console.log("arrows[i].xvel in script" + arrows[i].xvel);
     arrows[i].draw();
   }
   for (i = 0; i < enemies.length; i++) {
@@ -100,11 +89,7 @@ function updateGame() {
   } else {
     cycle = 0;
   }
-  if (
-    keys[87] == true &&
-    keys[83] != true &&
-    player.y > canvas.height / 2
-  ) {
+  if (keys[87] == true && keys[83] != true && player.y > canvas.height / 2) {
     player.yvel = -2;
   } else if (
     keys[83] == true &&
@@ -126,9 +111,9 @@ function updateGame() {
   } else {
     player.xvel = 0;
   }
-    player.x = player.x + player.xvel;
-    player.y = player.y + player.yvel;
-    player.image = "player" + String(cycle) + bow_state;
+  player.x = player.x + player.xvel;
+  player.y = player.y + player.yvel;
+  player.image = "player" + String(cycle) + bow_state;
   for (i = 0; i < enemies.length; i++) {
     enemies[i].x = enemies[i].x + enemies[i].xvel;
     enemies[i].y = enemies[i].y + enemies[i].yvel;
@@ -139,30 +124,29 @@ function updateGame() {
       } else {
         enemies[i].cyclefwd = 0;
       }
-      enemies[i].image = "enemy" + String(enemies[i].cyclefwd)
-    }
-    else if (enemies[i].xvel == -0.5){
+      enemies[i].image = "enemy" + String(enemies[i].cyclefwd);
+    } else if (enemies[i].xvel == -0.5) {
       if (enemies[i].cyclefwd < 6 && enemies[i].cycle == true) {
         enemies[i].cyclefwd += 1;
-        wounded_enemy = "wounded_enemy" + String(enemies[i].cyclefwd)
-        enemies[i].image = wounded_enemy
+        wounded_enemy = "wounded_enemy" + String(enemies[i].cyclefwd);
+        enemies[i].image = wounded_enemy;
         if (enemies[i].cyclefwd == 6) {
           enemies[i].cycle = false;
-          enemies[i].cycleback = 6
+          enemies[i].cycleback = 6;
         }
-      } 
+      }
       // else {
       //   enemies[i].cyclefwd = 0;
       // }
       else if (enemies[i].cycleback <= 6 && enemies[i].cycle == false) {
         enemies[i].cycleback -= 1;
-        enemies[i].image = "wounded_enemy" + String(enemies[i].cycleback)
+        enemies[i].image = "wounded_enemy" + String(enemies[i].cycleback);
         if (enemies[i].cycleback == 0) {
           enemies[i].cycle = true;
-          enemies[i].cyclefwd = 0
+          enemies[i].cyclefwd = 0;
         }
-      } 
-    } 
+      }
+    }
   }
   for (i = 0; i < arrows.length; i++) {
     if (arrows[i].doesitbounce == true)
@@ -174,13 +158,6 @@ function updateGame() {
     arrows[i].y = arrows[i].y + arrows[i].yvel;
     arrows[i].yvel = arrows[i].yvel + arrows[i].grav_constant;
     arrows[i].detect_collision();
-    try {
-        if (arrows[i].stuck_in_enemy == true) {
-            arrows[i].x = arrows[i].x + arrows[i].xvel;
-        }
-    } catch {
-        console.log('arrow has been deleted')
-    };
   }
   reDrawCanvas();
 }
@@ -194,7 +171,8 @@ document.body.addEventListener("keydown", function(e) {
     arrowxvel += 3;
     arrowyvel -= 0.85;
     shot_force -= 3;
-  } if (e.keyCode == 66) {
+  }
+  if (e.keyCode == 66) {
     // console.log("order 66");
     if (spawning == true) {
       spawning = false;
@@ -204,18 +182,18 @@ document.body.addEventListener("keydown", function(e) {
   } else {
     keys[e.keyCode] = true;
   }
-});  
+});
 document.body.addEventListener("keyup", function(e) {
-if (e.keyCode == 70 && arrow_delay_counter == 0) {
-      console.log('arrowxvel =' + arrowxvel)
-      arrows[arrows.length] = new Arrow(arrowxvel, arrowyvel);
-      bow_state = "b";
-      arrow_delay_counter = 16;
-      arrowyvel = 0;
-      arrowxvel = 0;
-      shot_force = 0;
+  if (e.keyCode == 70 && arrow_delay_counter == 0) {
+    console.log("arrowxvel =" + arrowxvel);
+    arrows[arrows.length] = new Arrow(arrowxvel, arrowyvel);
+    bow_state = "b";
+    arrow_delay_counter = 16;
+    arrowyvel = 0;
+    arrowxvel = 0;
+    shot_force = 0;
   }
-  keys[e.keyCode] = false; 
+  keys[e.keyCode] = false;
 });
 
 document.body.addEventListener("mousedown", function(e) {
@@ -236,8 +214,7 @@ document.body.addEventListener("mousedown", function(e) {
     // console.log(ydist);
     var x_to_y_ratio = ydist / (xdist + ydist);
     arrow.yvel =
-      (-(arrow.total_vel * x_to_y_ratio) *
-        (player.y + 43 - y_of_click)) /
+      (-(arrow.total_vel * x_to_y_ratio) * (player.y + 43 - y_of_click)) /
       Math.abs(player.y + 43 - y_of_click);
     arrow.xvel =
       ((arrow.total_vel - Math.abs(arrow.yvel)) *
