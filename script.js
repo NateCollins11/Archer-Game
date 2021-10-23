@@ -9,49 +9,44 @@ var game_over = false;
 var bow_state = "a";
 var arrow_delay_counter = 0;
 var spawning = true;
-var spawn_rate = 0.992;
-var level = 1;
 var score = 0;
 var obstacles = [];
 var arrows = [];
 var enemies = [];
-var arrowxvel = 0;
-var arrowyvel = 0;
-var shot_force = 0;
-var wounded_enemy = "";
-var player = {
-  image: "player0",
-  y: height - unit * 3,
-  x: unit * 6,
-  height: unit * 2,
-  width: unit * 2,
-  yvel: 0,
-  xvel: 0,
-  total_vel: 24
-};
+var characters = [
+  (player = {
+    image: "player0",
+    y: height - unit * 3,
+    x: unit * 6,
+    height: unit * 2,
+    width: unit * 2,
+    yvel: 0,
+    xvel: 0,
+    total_vel: 24
+  })
+];
+
 function reDrawCanvas() {
-  c.fillStyle = "lightblue";
+  c.fillStyle = "grey";
   c.fillRect(0, 0, width, height / 2);
-  c.fillStyle = "green";
+  c.fillStyle = "lightGrey";
   c.fillRect(0, height / 2, width, height / 2);
   c.font = "40px Arial";
   c.fillText("Score: " + String(score), unit * 2, unit * 2);
-  c.fillText("Level: " + String(level), unit * 15, unit * 2);
   if (game_over == true) {
     c.fillText("Game Over", (width * 2) / 5, height / 8);
   }
-  var image = document.getElementById(player.image);
-  c.drawImage(image, player.x, player.y, player.width, player.height);
-  c.strokeRect(
-    player.x + player.width / 2.4,
-    player.y - player.height / 2,
-    unit * 0.3,
-    unit
-  );
-  c.fillStyle = "black";
-  c.fillRect(player.x + player.width / 2.4, player.y, unit * 0.3, shot_force);
+  for (i = 0; i < characters.length; i++) {
+    var image = document.getElementById(characters[i].image);
+    c.drawImage(
+      image,
+      characters[i].x,
+      characters[i].y,
+      characters[i].width,
+      characters[i].height
+    );
+  }
   for (i = 0; i < arrows.length; i++) {
-    console.log("arrows[i].xvel in script" + arrows[i].xvel);
     arrows[i].draw();
   }
   for (i = 0; i < enemies.length; i++) {
@@ -67,20 +62,18 @@ function reDrawCanvas() {
 }
 
 function updateGame() {
-  if (game_over == false) {
-    window.requestAnimationFrame(updateGame);
-  }
   if (arrow_delay_counter > 0) {
     arrow_delay_counter = arrow_delay_counter - 1;
   } else {
     bow_state = "a";
   }
   if (spawning == true) {
-    if (Math.random() > spawn_rate) {
+    if (Math.random() > 0.992) {
+      console.log("Spawned baddie");
       enemies[enemies.length] = new Enemy();
     }
   }
-  if (player.xvel != 0 || player.yvel != 0) {
+  if (characters[0].xvel != 0 || characters[0].yvel != 0) {
     if (cycle < 3) {
       cycle = cycle + 1;
     } else {
@@ -89,63 +82,43 @@ function updateGame() {
   } else {
     cycle = 0;
   }
-  if (keys[87] == true && keys[83] != true && player.y > canvas.height / 2) {
-    player.yvel = -2;
+  if (
+    keys[87] == true &&
+    keys[83] != true &&
+    characters[0].y > canvas.height / 2
+  ) {
+    characters[0].yvel = -2;
   } else if (
     keys[83] == true &&
     keys[87] != true &&
-    player.y < canvas.height - player.height
+    characters[0].y < canvas.height - characters[0].height
   ) {
-    player.yvel = 2;
+    characters[0].yvel = 2;
   } else {
-    player.yvel = 0;
+    characters[0].yvel = 0;
   }
-  if (keys[65] == true && keys[68] != true && player.x > 0) {
-    player.xvel = -3;
+  if (keys[65] == true && keys[68] != true && characters[0].x > 0) {
+    characters[0].xvel = -3;
   } else if (
     keys[68] == true &&
     keys[65] != true &&
-    player.x < canvas.width - player.width
+    characters[0].x < canvas.width - characters[0].width
   ) {
-    player.xvel = 3;
+    characters[0].xvel = 3;
   } else {
-    player.xvel = 0;
+    characters[0].xvel = 0;
   }
-  player.x = player.x + player.xvel;
-  player.y = player.y + player.yvel;
-  player.image = "player" + String(cycle) + bow_state;
+  for (i = 0; i < characters.length; i++) {
+    characters[i].x = characters[i].x + characters[i].xvel;
+    characters[i].y = characters[i].y + characters[i].yvel;
+    characters[i].image = "player" + String(cycle) + bow_state;
+  }
   for (i = 0; i < enemies.length; i++) {
     enemies[i].x = enemies[i].x + enemies[i].xvel;
     enemies[i].y = enemies[i].y + enemies[i].yvel;
-    enemies[i].loss_check(); //+ String(cycle);
-    if (enemies[i].xvel < -0.5) {
-      if (enemies[i].cyclefwd < 5) {
-        enemies[i].cyclefwd += 1;
-      } else {
-        enemies[i].cyclefwd = 0;
-      }
-      enemies[i].image = "enemy" + String(enemies[i].cyclefwd);
-    } else if (enemies[i].xvel == -0.5) {
-      if (enemies[i].cyclefwd < 6 && enemies[i].cycle == true) {
-        enemies[i].cyclefwd += 1;
-        wounded_enemy = "wounded_enemy" + String(enemies[i].cyclefwd);
-        enemies[i].image = wounded_enemy;
-        if (enemies[i].cyclefwd == 6) {
-          enemies[i].cycle = false;
-          enemies[i].cycleback = 6;
-        }
-      }
-      // else {
-      //   enemies[i].cyclefwd = 0;
-      // }
-      else if (enemies[i].cycleback <= 6 && enemies[i].cycle == false) {
-        enemies[i].cycleback -= 1;
-        enemies[i].image = "wounded_enemy" + String(enemies[i].cycleback);
-        if (enemies[i].cycleback == 0) {
-          enemies[i].cycle = true;
-          enemies[i].cyclefwd = 0;
-        }
-      }
+    if (enemies[i].is_statue == false) {
+      enemies[i].loss_check();
+      enemies[i].image = "enemy"; //+ String(cycle);
     }
   }
   for (i = 0; i < arrows.length; i++) {
@@ -157,23 +130,26 @@ function updateGame() {
     arrows[i].x = arrows[i].x + arrows[i].xvel;
     arrows[i].y = arrows[i].y + arrows[i].yvel;
     arrows[i].yvel = arrows[i].yvel + arrows[i].grav_constant;
+
     arrows[i].detect_collision();
   }
   reDrawCanvas();
+  if (game_over == false) {
+    window.requestAnimationFrame(updateGame);
+  }
 }
 
 updateGame();
 
-// reDrawCanvas();
-
 document.body.addEventListener("keydown", function(e) {
-  if (e.keyCode == 70 && arrowxvel <= 30 && arrowyvel >= -9) {
-    arrowxvel += 3;
-    arrowyvel -= 0.85;
-    shot_force -= 3;
-  }
-  if (e.keyCode == 66) {
-    // console.log("order 66");
+  if (e.keyCode == 70) {
+    if (arrow_delay_counter == 0) {
+      arrows[arrows.length] = new Arrow();
+      bow_state = "b";
+      arrow_delay_counter = 16;
+    }
+  } else if (e.keyCode == 66) {
+    console.log("order 66");
     if (spawning == true) {
       spawning = false;
     } else {
@@ -184,18 +160,8 @@ document.body.addEventListener("keydown", function(e) {
   }
 });
 document.body.addEventListener("keyup", function(e) {
-  if (e.keyCode == 70 && arrow_delay_counter == 0) {
-    console.log("arrowxvel =" + arrowxvel);
-    arrows[arrows.length] = new Arrow(arrowxvel, arrowyvel);
-    bow_state = "b";
-    arrow_delay_counter = 16;
-    arrowyvel = 0;
-    arrowxvel = 0;
-    shot_force = 0;
-  }
   keys[e.keyCode] = false;
 });
-
 document.body.addEventListener("mousedown", function(e) {
   if (arrow_delay_counter == 0) {
     let rect = canvas.getBoundingClientRect();
@@ -208,18 +174,19 @@ document.body.addEventListener("mousedown", function(e) {
     //console.log("Coordinate x: " + x_of_click, "Coordinate y: " + y_of_click);
     arrows[arrows.length] = new Arrow();
     var arrow = arrows[arrows.length - 1];
-    xdist = Math.abs(x_of_click - player.x + player.width / 3);
-    // console.log(xdist);
-    ydist = Math.abs(player.y - y_of_click - player.height / 2);
-    // console.log(ydist);
+    xdist = Math.abs(x_of_click - characters[0].x + characters[0].width / 3);
+    console.log(xdist);
+    ydist = Math.abs(characters[0].y - y_of_click - characters[0].height / 2);
+    console.log(ydist);
     var x_to_y_ratio = ydist / (xdist + ydist);
     arrow.yvel =
-      (-(arrow.total_vel * x_to_y_ratio) * (player.y + 43 - y_of_click)) /
-      Math.abs(player.y + 43 - y_of_click);
+      (-(arrow.total_vel * x_to_y_ratio) *
+        (characters[0].y + 43 - y_of_click)) /
+      Math.abs(characters[0].y + 43 - y_of_click);
     arrow.xvel =
       ((arrow.total_vel - Math.abs(arrow.yvel)) *
-        Math.abs(x_of_click - player.x + 24)) /
-      (x_of_click - player.x + 24);
+        Math.abs(x_of_click - characters[0].x + 24)) /
+      (x_of_click - characters[0].x + 24);
 
     //
     //
